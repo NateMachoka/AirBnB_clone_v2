@@ -3,6 +3,7 @@
 from os import getenv
 from models.base_model import BaseModel
 
+
 if getenv('HBNB_TYPE_STORAGE') == 'db':
     from sqlalchemy import Column, String
     from sqlalchemy.orm import relationship
