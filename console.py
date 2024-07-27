@@ -130,7 +130,10 @@ class HBNBCommand(cmd.Cmd):
             if value[0] == '"':
                 value = value.strip('"').replace('_', ' ')
             elif '.' in value:
-                value = float(value)
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass
             else:
                 try:
                     value = int(value)
