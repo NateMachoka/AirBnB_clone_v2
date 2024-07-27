@@ -23,7 +23,7 @@ def hello_hbnb():
     return "Hello HBNB!"
 
 
-app.route('/', strict_slashes=False)
+@app.route('/', strict_slashes=False)
 def hello_hbnb():
     """Displaya 'HBNB'"""
     return "HBNB"
@@ -34,6 +34,7 @@ def c_text(text):
     """Displays 'C ' followed by the value of the text variable"""
     sanitized_text = escape(text.replace('_', ' '))
     return "C {}".format(sanitized_text)
+
 
 @app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
