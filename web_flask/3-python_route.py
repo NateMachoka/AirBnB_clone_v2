@@ -29,19 +29,18 @@ def hello_hbnb():
     return "HBNB"
 
 
-app.route('/c/<text>', strict_slashes=False)
+@app.route('/c/<text>', strict_slashes=False)
 def c_text(text):
-    """Displays "C " followed by the value of the text variable"""
+    """Displays 'C ' followed by the value of the text variable"""
     sanitized_text = escape(text.replace('_', ' '))
-    return f"C {sanitized_text}"
+    return "C {}".format(sanitized_text)
 
-
-app.route('/Python/', defaults={'text': 'is cool'}, scrict_slashes=False)
-app.route('/Python/<text>', strict_slashes=False)
+@app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
+@app.route('/python/<text>', strict_slashes=False)
 def python_text(text):
-    """Displays "Python " followed by the value of the text variable"""
+    """Displays 'Python ' followed by the value of the text variable"""
     sanitized_text = escape(text.replace('_', ' '))
-    return f"Python {sanitized_text}"
+    return "Python {}".format(sanitized_text)
 
 
 if __name__ == "__main__":
