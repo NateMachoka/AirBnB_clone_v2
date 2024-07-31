@@ -4,6 +4,8 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, ForeignKey, Float
 from sqlalchemy.orm import relationship
+from models.review import Review
+from os import getenv
 
 
 class Place(BaseModel, Base):
@@ -22,3 +24,12 @@ class Place(BaseModel, Base):
 
     user = relationship("User", back_populates="places")
     city = relationship("City", back_populates="places")
+
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        reviews = relationship('Review', backref='place', cascade='all, delete, delete-orphan')
+    else:
+        @property
+        def reviews(self):
+            """Returns the list of Review instances with place_id equals to the current Place.id"""
+            from models import storage
+            return [review for review in storage.all(Review).values() if review.place_id == self.id]
