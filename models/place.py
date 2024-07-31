@@ -2,10 +2,18 @@
 """ Place Module for HBNB project """
 
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Float
+from sqlalchemy import Column, String, Integer, ForeignKey, Float, Table, MetaData
 from sqlalchemy.orm import relationship
 from models.review import Review
 from os import getenv
+
+
+metadata = Base.metadata
+place_amenity = Table(
+    'place_amenity', metadata,
+    Column('place_id', String(60), ForeignKey('places.id'), primary_key=True, nullable=False),
+    Column('amenity_id', String(60), ForeignKey('amenities.id'), primary_key=True, nullable=False)
+)
 
 
 class Place(BaseModel, Base):
@@ -27,9 +35,33 @@ class Place(BaseModel, Base):
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship('Review', backref='place', cascade='all, delete, delete-orphan')
+        amenities = relationship(
+        'Amenity',
+        secondary=place_amenity,
+        viewonly=False,
+        overlaps="place_amenities"
+    )
     else:
         @property
         def reviews(self):
             """Returns the list of Review instances with place_id equals to the current Place.id"""
             from models import storage
             return [review for review in storage.all(Review).values() if review.place_id == self.id]
+        @property
+        def amenities(self):
+            """Getter attribute amenities that returns the list of Amenity instances based on the attribute amenity_ids"""
+            from models import storage
+            from models.amenity import Amenity
+            amenity_list = []
+            for amenity_id in self.amenity_ids:
+                amenity = storage.get(Amenity, amenity_id)
+                if amenity:
+                    amenity_list.append(amenity)
+            return amenity_list
+
+        @amenities.setter
+        def amenities(self, obj):
+            """Setter attribute amenities that handles append method for adding an Amenity.id"""
+            if isinstance(obj, Amenity):
+                if obj.id not in self.amenity_ids:
+                    self.amenity_ids.append(obj.id)
